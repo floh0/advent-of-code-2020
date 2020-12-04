@@ -1,7 +1,7 @@
 import re
 
 with open("day4.txt", "r") as f:
-	input = ("\n".join(f.readlines())).split("\n\n\n")
+	input = "".join(f.readlines()).split("\n\n")
 
 hgtr = re.compile(r"^([0-9]+)(cm|in)$")
 hclr = re.compile(r"^\#[0-9a-f]{6}$")
@@ -11,12 +11,11 @@ pidr = re.compile(r"^[0-9]{9}$")
 def hgt(x):
 	m = hgtr.match(x)
 	if m:
-		a,b = m.group(1), m.group(2)
-		c = int(a)
+		a,b = m.group(1), m.group(2) 
 		if b == "cm":
-			return c >= 150 and c <= 193
+			return int(a) >= 150 and int(a) <= 193
 		if b == "in":
-			return c >= 59 and c <= 76
+			return int(a) >= 59 and int(a) <= 76
 	else:
 		return False
 
@@ -46,6 +45,3 @@ for x in input:
 		i += 1
 
 print(i)
-
-
-
