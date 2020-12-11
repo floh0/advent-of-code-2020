@@ -21,37 +21,29 @@ for n in ci:
 part1 = n1*n3
 print(n1, n3, part1)
 
-g = []
+def foo(t, acc):
+	if t not in acc:
+		acc.append(t)
+	for x in range(len(t)-1):
+		a = sum(t[x:x+2])
+		if a <= 3:
+			nt = t[:x] + [a] + t[x+2:]
+			foo(nt, acc)
+	return acc
+
+def bar(n):
+	return len(foo([1 for x in range(n)], []))
+
 acc = 0
+part2 = 1
 for x in range(len(ci)):
 	if ci[x] == 3:
-		g.append(acc)
+		part2 *= bar(acc)
 		acc = 0
 	else:
 		acc += 1
 
-print(ci)
-print(g)
+print(part2)
 
-1 1 1 1
-2 1 1
-1 2 1
-1 1 2
-2 2
-3 1
-1 3
-
-1 1 1
-2 1
-1 2
-3
-
-1 1
-2
-
-0 -> 1
-1 -> 1
-2 -> 2
-3 -> 4
 
 
