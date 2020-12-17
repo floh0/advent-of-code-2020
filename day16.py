@@ -44,4 +44,20 @@ for n,b in mi.items():
 		if ispossible([g[y][x] for y in range(len(g))],b):
 			c[n].append(x)
 
-print(c)
+def attribute(m):
+	w = False
+	for k,v in m.items():
+		if len(v) == 1:
+			x = v[0]
+			m = {k:[y for y in v if y != x] for k,v in m.items()}
+			m[k] = v
+		else:
+			w = True
+	return attribute(m) if w else m
+
+rd = re.compile("^departure.+")
+part2 = 1
+for k,v in attribute(c).items():
+	if rd.match(k):
+		part2*=mt[v[0]]
+print(part2)
