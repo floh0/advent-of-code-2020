@@ -1,12 +1,7 @@
 with open("day20.txt", "r") as f:
 	i = [x.split("\n") for x in "".join(f.readlines()).split("\n\n")]
 
-t = {}
-b = {}
-l = {}
-r = {}
-
-m = {}
+m,t,b,l,r = {},{},{},{},{}
 for a in i:
 	m[a[0][5:-1]] = a[1:]
 
@@ -19,22 +14,17 @@ for x,y in m.items():
 c = {x:{"t":[],"b":[],"l":[],"r":[]} for x in m}
 for e in m:
 	for x in t:
-		if x != e:
-			if t[x] in [b[e], b[e][::-1], t[e], t[e][::-1], l[e], l[e][::-1], r[e], r[e][::-1]]:
-				c[x]["t"].append(e)
+		if x != e and t[x] in [b[e], b[e][::-1], t[e], t[e][::-1], l[e], l[e][::-1], r[e], r[e][::-1]]:
+			c[x]["t"].append(e)
 	for x in b:
-		if x != e:
-			if b[x] in [b[e], b[e][::-1], t[e], t[e][::-1], l[e], l[e][::-1], r[e], r[e][::-1]]:
-				c[x]["b"].append(e)
+		if x != e and b[x] in [b[e], b[e][::-1], t[e], t[e][::-1], l[e], l[e][::-1], r[e], r[e][::-1]]:
+			c[x]["b"].append(e)
 	for x in l:
-		if x != e:
-			if l[x] in [b[e], b[e][::-1], t[e], t[e][::-1], l[e], l[e][::-1], r[e], r[e][::-1]]:
-				c[x]["l"].append(e)
+		if x != e and l[x] in [b[e], b[e][::-1], t[e], t[e][::-1], l[e], l[e][::-1], r[e], r[e][::-1]]:
+			c[x]["l"].append(e)
 	for x in r:
-		if x != e:
-			if r[x] in [b[e], b[e][::-1], t[e], t[e][::-1], l[e], l[e][::-1], r[e], r[e][::-1]]:
-				c[x]["r"].append(e)
-
+		if x != e and r[x] in [b[e], b[e][::-1], t[e], t[e][::-1], l[e], l[e][::-1], r[e], r[e][::-1]]:
+			c[x]["r"].append(e)
 
 part1 = 1
 for x,y in c.items():
@@ -46,16 +36,12 @@ print(part1)
 q = {e: (0,0)}
 if c[e]["t"]:
 	q[c[e]["t"][0]] = (0,1)
-	ly = -1 
 if c[e]["b"]:
 	q[c[e]["b"][0]] = (0,-1)
-	lx = 1
 if c[e]["l"]:
 	q[c[e]["l"][0]] = (-1,0)
-	ly = 1
 if c[e]["r"]:
 	q[c[e]["r"][0]] = (1,0)
-	ly = -1
 c = {k:v for k,v in c.items() if k != e}
 
 while len(c) > 0:
@@ -97,4 +83,89 @@ qq = [[0 for _ in range(12)] for _ in range(12)]
 for u,(x,y) in q.items():
 	qq[abs(y)][abs(x)] = u
 
+def rotate(q):
+	qn = [[x for x in y] for y in q]
+	for y in range(len(q)):
+		qy = len(q[y])
+		for x in range(qy):
+			qn[y][x] = q[qy-1-x][y]
+	return ["".join(x) for x in qn]
+
+def flip(q):
+	return [x[::-1] for x in q]
+
+qqq = [[[] for _ in range(12)] for _ in range(12)]
+
+for y in range(len(qq)):
+	for x in range(len(qq[y])):
+		if x == 0:
+			t = m[qq[y][x]]
+			if y == 0:
+				qqq[y][x] = m[qq[y][x]]
+			elif qqq[y-1][x][-1] == t[0]:
+				qqq[y][x] = t
+			elif qqq[y-1][x][-1] == t[0][::-1]:
+				qqq[y][x] = flip(t)
+			elif qqq[y-1][x][-1] == "".join([z[0] for z in t][::-1]):
+				qqq[y][x] = rotate(t)
+			elif qqq[y-1][x][-1] == "".join([z[0] for z in t]):
+				qqq[y][x] = flip(rotate(t))
+			elif qqq[y-1][x][-1] == t[-1][::-1]:
+				qqq[y][x] = rotate(rotate(t))
+			elif qqq[y-1][x][-1] == t[-1]:
+				qqq[y][x] = flip(rotate(rotate(t)))
+			elif qqq[y-1][x][-1] == "".join([z[-1] for z in t]):
+				qqq[y][x] = rotate(rotate(rotate(t)))
+			elif qqq[y-1][x][-1] == "".join([z[-1] for z in t][::-1]):
+				qqq[y][x] = flip(rotate(rotate(rotate(t))))
+		else:
+			t = m[qq[y][x]]
+			tt = "".join([z[-1] for z in qqq[y][x-1]])
+			if tt == t[0]:
+				qqq[y][x] = flip(rotate(t))
+			elif tt == t[0][::-1]:
+				qqq[y][x] = flip(rotate(flip(t)))
+			elif tt == "".join([z[0] for z in t][::-1]):
+				qqq[y][x] = flip(rotate(rotate(t)))
+			elif tt == "".join([z[0] for z in t]):
+				qqq[y][x] = t
+			elif tt == t[-1][::-1]:
+				qqq[y][x] = rotate(flip(t))
+			elif tt == t[-1]:
+				qqq[y][x] = rotate(t)
+			elif tt == "".join([z[-1] for z in t]):
+				qqq[y][x] = flip(t)
+			elif tt == "".join([z[-1] for z in t][::-1]):
+				qqq[y][x] = rotate(rotate(t))
+
+qqqq = [[[z[1:-1] for z in x[1:-1]] for x in y] for y in qqq]
+
+fp = []
+for y in range(len(qqqq)):
+	for z in range(len(qqqq[y][0])):
+		s = ""
+		for x in range(len(qqqq[y])):
+			s += qqqq[y][x][z]
+		fp.append(s)
+
+#            1111111111
+#  01234567890123456789
+# 0                  # 
+# 1#    ##    ##    ###
+# 2 #  #  #  #  #  #   
+def findmonster(x,y,fp):
+	for e in [fp[y][x+18], fp[y+1][x], fp[y+1][x+5], fp[y+1][x+6], fp[y+1][x+11], fp[y+1][x+12], fp[y+1][x+17], fp[y+1][x+18], fp[y+1][x+19], fp[y+2][x+1], fp[y+2][x+4], fp[y+2][x+7], fp[y+2][x+10], fp[y+2][x+13], fp[y+2][x+16]]:
+		if e != "#":
+			return False
+	return True
+
+for fpp in [fp, rotate(fp),rotate(rotate(fp)),rotate(rotate(rotate(fp))),flip(fp),flip(rotate(fp)),flip(rotate(rotate(fp))),flip(rotate(rotate(rotate(fp))))]:
+	nm = 0
+	for y in range(len(fpp)-2):
+		for x in range(len(fpp)-19):
+			if findmonster(x,y,fpp):
+				nm += 1
+	if nm > 0:
+		part2 = sum([1 if ee == "#" else 0 for e in fpp for ee in e])-nm*15
+		print(part2)
 
