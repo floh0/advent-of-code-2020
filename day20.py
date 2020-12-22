@@ -169,3 +169,5 @@ for fpp in [fp, rotate(fp),rotate(rotate(fp)),rotate(rotate(rotate(fp))),flip(fp
 		part2 = sum([1 if ee == "#" else 0 for e in fpp for ee in e])-nm*15
 		print(part2)
 
+for x in fp:
+	print(x)
